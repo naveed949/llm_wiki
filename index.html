@@ -5,6 +5,26 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LLM Wiki</title>
+    <script>
+      (function() {
+        // Try to get stored preference from localStorage (fast path)
+        try {
+          var stored = localStorage.getItem('app-state.json');
+          if (stored) {
+            var state = JSON.parse(stored);
+            if (state.themePreference) {
+              var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+              var effective = state.themePreference === 'system' 
+                ? (prefersDark ? 'dark' : 'light')
+                : state.themePreference;
+              if (effective === 'dark') {
+                document.documentElement.classList.add('dark');
+              }
+            }
+          }
+        } catch(e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

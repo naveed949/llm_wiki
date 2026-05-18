@@ -20,7 +20,8 @@ import { Button } from "@/components/ui/button"
 import { useWikiStore } from "@/stores/wiki-store"
 import { useChatStore } from "@/stores/chat-store"
 import { useUpdateStore, hasAvailableUpdate } from "@/stores/update-store"
-import { loadSourceWatchConfig, saveLanguage } from "@/lib/project-store"
+import { loadSourceWatchConfig, saveLanguage, saveThemePreference } from "@/lib/project-store"
+import { applyTheme } from "@/lib/theme-utils"
 import type { SettingsDraft, DraftSetter } from "./settings-types"
 import { normalizeSourceWatchConfig } from "@/lib/source-watch-config"
 import { LlmProviderSection } from "./sections/llm-provider-section"
@@ -360,7 +361,11 @@ export function SettingsView() {
     }
 
     if (draft.themePreference !== themePreference) {
+      const newTheme = draft.themePreference === 'system'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : draft.themePreference
       setThemePreference(draft.themePreference)
+      applyTheme(newTheme)
       await import("@/lib/project-store").then(({ saveThemePreference }) =>
         saveThemePreference(draft.themePreference)
       )
