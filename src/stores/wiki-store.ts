@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import type { WikiProject, FileNode } from "@/types/wiki"
 import { DEFAULT_SOURCE_WATCH_CONFIG } from "@/lib/source-watch-config"
+export type { ThemePreference } from "@/components/settings/settings-types"
 
 /**
  * Wire protocol used when `provider === "custom"`. Other providers have a
@@ -247,6 +248,7 @@ interface WikiState {
   proxyConfig: ProxyConfig
   scheduledImportConfig: ScheduledImportConfig
   sourceWatchConfig: SourceWatchConfig
+  themePreference: "light" | "dark" | "system"
   dataVersion: number
 
   setProject: (project: WikiProject | null) => void
@@ -266,6 +268,7 @@ interface WikiState {
   setProxyConfig: (config: ProxyConfig) => void
   setScheduledImportConfig: (config: ScheduledImportConfig) => void
   setSourceWatchConfig: (config: SourceWatchConfig) => void
+  setThemePreference: (pref: "light" | "dark" | "system") => void
   bumpDataVersion: () => void
 }
 
@@ -347,6 +350,7 @@ export const useWikiStore = create<WikiState>((set) => ({
   },
 
   sourceWatchConfig: DEFAULT_SOURCE_WATCH_CONFIG,
+  themePreference: "system" as const,
 
   setLlmConfig: (llmConfig) => set({ llmConfig }),
   setProviderConfigs: (providerConfigs) => set({ providerConfigs }),
@@ -358,6 +362,7 @@ export const useWikiStore = create<WikiState>((set) => ({
   setProxyConfig: (proxyConfig) => set({ proxyConfig }),
   setScheduledImportConfig: (scheduledImportConfig) => set({ scheduledImportConfig }),
   setSourceWatchConfig: (sourceWatchConfig) => set({ sourceWatchConfig }),
+  setThemePreference: (themePreference) => set({ themePreference }),
   bumpDataVersion: () => set((state) => ({ dataVersion: state.dataVersion + 1 })),
 }))
 

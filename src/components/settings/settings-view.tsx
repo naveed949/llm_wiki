@@ -84,6 +84,7 @@ function initialDraft(
   sourceWatch: ReturnType<typeof useWikiStore.getState>["sourceWatchConfig"],
   maxHistoryMessages: number,
   uiLanguage: string,
+  themePreference: ReturnType<typeof useWikiStore.getState>["themePreference"],
   projectPath?: string,
 ): SettingsDraft {
   // Show absolute path: if stored path is empty, show default using project path
@@ -132,6 +133,7 @@ function initialDraft(
     scheduledImportInterval: scheduledImport.interval,
     sourceWatchConfig: normalizeSourceWatchConfig(sourceWatch),
     uiLanguage,
+    themePreference,
   }
 }
 
@@ -152,6 +154,8 @@ export function SettingsView() {
   const setScheduledImportConfig = useWikiStore((s) => s.setScheduledImportConfig)
   const sourceWatchConfig = useWikiStore((s) => s.sourceWatchConfig)
   const setSourceWatchConfig = useWikiStore((s) => s.setSourceWatchConfig)
+  const themePreference = useWikiStore((s) => s.themePreference)
+  const setThemePreference = useWikiStore((s) => s.setThemePreference)
   const maxHistoryMessages = useChatStore((s) => s.maxHistoryMessages)
   const setMaxHistoryMessages = useChatStore((s) => s.setMaxHistoryMessages)
   // Drives the red dot next to the "About" row in the settings
@@ -177,6 +181,7 @@ export function SettingsView() {
       sourceWatchConfig,
       maxHistoryMessages,
       i18n.language,
+      themePreference,
       project?.path,
     ),
   )
@@ -219,6 +224,7 @@ export function SettingsView() {
         sourceWatchConfig,
         maxHistoryMessages,
         prev.uiLanguage,
+        prev.themePreference,
         project?.path,
       ),
     )
@@ -353,6 +359,13 @@ export function SettingsView() {
       await saveLanguage(draft.uiLanguage)
     }
 
+    if (draft.themePreference !== themePreference) {
+      setThemePreference(draft.themePreference)
+      await import("@/lib/project-store").then(({ saveThemePreference }) =>
+        saveThemePreference(draft.themePreference)
+      )
+    }
+
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }, [
@@ -364,9 +377,11 @@ export function SettingsView() {
     setProxyConfig,
     setScheduledImportConfig,
     setSourceWatchConfig,
+    setThemePreference,
     scheduledImportConfig,
     setMaxHistoryMessages,
     outputLanguage,
+    themePreference,
   ])
 
   const body = useMemo(() => {

@@ -1,6 +1,6 @@
 import { load } from "@tauri-apps/plugin-store"
 import type { WikiProject } from "@/types/wiki"
-import type { LlmConfig, SearchApiConfig, EmbeddingConfig, MultimodalConfig, OutputLanguage, ProviderConfigs, ProxyConfig, ScheduledImportConfig, SourceWatchConfig } from "@/stores/wiki-store"
+import type { LlmConfig, SearchApiConfig, EmbeddingConfig, MultimodalConfig, OutputLanguage, ProviderConfigs, ProxyConfig, ScheduledImportConfig, SourceWatchConfig, ThemePreference } from "@/stores/wiki-store"
 import { normalizeSourceWatchConfig } from "@/lib/source-watch-config"
 import { normalizePath } from "@/lib/path-utils"
 
@@ -199,6 +199,18 @@ const OUTPUT_LANGUAGE_KEY = "outputLanguage"
 const PROJECT_OUTPUT_LANGUAGE_KEY = "projectOutputLanguages"
 const PROJECT_FILE_SYNC_KEY = "projectFileSyncEnabled"
 const SOURCE_WATCH_CONFIG_KEY = "sourceWatchConfig"
+
+const THEME_PREFERENCE_KEY = "themePreference"
+
+export async function saveThemePreference(pref: ThemePreference): Promise<void> {
+  const store = await getStore()
+  await store.set(THEME_PREFERENCE_KEY, pref)
+}
+
+export async function loadThemePreference(): Promise<ThemePreference | null> {
+  const store = await getStore()
+  return (await store.get<ThemePreference>(THEME_PREFERENCE_KEY)) ?? null
+}
 
 export async function saveOutputLanguage(lang: OutputLanguage, projectId?: string): Promise<void> {
   const store = await getStore()

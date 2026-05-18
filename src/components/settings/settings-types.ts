@@ -1,6 +1,8 @@
 import type { CustomApiMode } from "./llm-presets"
 import type { ReasoningConfig, SourceWatchConfig } from "@/stores/wiki-store"
 
+export type ThemePreference = "light" | "dark" | "system"
+
 /**
  * Shape of the draft state each section reads from and writes into.
  * The parent (SettingsView) owns one instance and hands it to every
@@ -62,6 +64,9 @@ export interface SettingsDraft {
 
   // Source folder auto watch
   sourceWatchConfig: SourceWatchConfig
+
+  // Theme preference
+  themePreference: ThemePreference
 }
 
 export type DraftSetter = <K extends keyof SettingsDraft>(
