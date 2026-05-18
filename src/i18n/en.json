@@ -370,7 +370,12 @@
         "title": "Interface",
         "description": "UI language and appearance. Changes apply immediately and persist.",
         "uiLanguage": "UI Language",
-        "uiLanguageHint": "Affects labels, buttons, and other UI strings only. The AI output language is set separately in Output Preferences."
+        "uiLanguageHint": "Affects labels, buttons, and other UI strings only. The AI output language is set separately in Output Preferences.",
+        "theme": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System",
+        "themeHint": "Choose your preferred color theme"
       },
       "maintenance": {
         "title": "Maintenance",

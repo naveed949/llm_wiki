@@ -48,6 +48,48 @@ export function InterfaceSection({ draft, setDraft }: Props) {
           {t("settings.sections.interface.uiLanguageHint")}
         </p>
       </div>
+
+      <div className="space-y-2">
+        <Label>{t("settings.sections.interface.theme")}</Label>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setDraft("themePreference", "light")}
+            className={`rounded-md border px-3 py-1.5 text-sm transition-colors flex items-center gap-1.5 ${
+              draft.themePreference === "light"
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border hover:bg-accent"
+            }`}
+          >
+            <span>☀️</span> {t("settings.sections.interface.light")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setDraft("themePreference", "dark")}
+            className={`rounded-md border px-3 py-1.5 text-sm transition-colors flex items-center gap-1.5 ${
+              draft.themePreference === "dark"
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border hover:bg-accent"
+            }`}
+          >
+            <span>🌙</span> {t("settings.sections.interface.dark")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setDraft("themePreference", "system")}
+            className={`rounded-md border px-3 py-1.5 text-sm transition-colors flex items-center gap-1.5 ${
+              draft.themePreference === "system"
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border hover:bg-accent"
+            }`}
+          >
+            <span>💻</span> {t("settings.sections.interface.system")}
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {t("settings.sections.interface.themeHint")}
+        </p>
+      </div>
     </div>
   )
 }
