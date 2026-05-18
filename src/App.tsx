@@ -9,6 +9,7 @@ import { getLastProject, getRecentProjects, saveLastProject, loadLlmConfig, load
 import { loadReviewItems, loadChatHistory } from "@/lib/persist"
 import { setupAutoSave } from "@/lib/auto-save"
 import { startClipWatcher } from "@/lib/clip-watcher"
+import { resolveEffectiveTheme, applyTheme, setupSystemThemeListener } from "@/lib/theme-utils"
 import { AppLayout } from "@/components/layout/app-layout"
 import { WelcomeScreen } from "@/components/project/welcome-screen"
 import { CreateProjectDialog } from "@/components/project/create-project-dialog"
@@ -22,12 +23,40 @@ function App() {
   const setActiveView = useWikiStore((s) => s.setActiveView)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [systemListenerCleanup, setSystemListenerCleanup] = useState<() => void>(() => () => {})
 
   // Set up auto-save and clip watcher once on mount
   useEffect(() => {
     setupAutoSave()
     startClipWatcher()
   }, [])
+
+  // Clean up system theme listener on unmount
+  useEffect(() => {
+    return () => {
+      systemListenerCleanup()
+    }
+  }, [systemListenerCleanup])
+
+  // Subscribe to theme preference changes from settings
+  useEffect(() => {
+    const unsubscribe = useWikiStore.subscribe(
+      (state, prevState) => state.themePreference !== prevState.themePreference,
+      (state) => {
+        const effective = resolveEffectiveTheme(state.themePreference)
+        applyTheme(effective)
+        // Handle system listener
+        if (state.themePreference === "system") {
+          const cleanup = setupSystemThemeListener((t) => applyTheme(t))
+          setSystemListenerCleanup(() => cleanup)
+        } else {
+          systemListenerCleanup()
+          setSystemListenerCleanup(() => () => {})
+        }
+      }
+    )
+    return unsubscribe
+  }, [systemListenerCleanup])
 
   // Dev-only helper for visually testing the update-banner UX.
   // Open dev tools and run:
@@ -215,8 +244,16 @@ function App() {
           useWikiStore.getState().setEmbeddingConfig(savedEmbeddingConfig)
         }
         const savedTheme = await loadThemePreference()
-        if (savedTheme) {
-          useWikiStore.getState().setThemePreference(savedTheme)
+        const initialTheme = savedTheme ?? "system"
+        useWikiStore.getState().setThemePreference(initialTheme)
+        const effectiveTheme = resolveEffectiveTheme(initialTheme)
+        applyTheme(effectiveTheme)
+        // If system preference, set up listener:
+        if (initialTheme === "system") {
+          const cleanup = setupSystemThemeListener((theme) => {
+            applyTheme(theme)
+          })
+          setSystemListenerCleanup(() => cleanup)
         }
         const savedMultimodalConfig = await loadMultimodalConfig()
         if (savedMultimodalConfig) {
