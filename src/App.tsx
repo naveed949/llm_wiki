@@ -41,17 +41,18 @@ function App() {
   // Subscribe to theme preference changes from settings
   useEffect(() => {
     const unsubscribe = useWikiStore.subscribe(
-      (state, prevState) => state.themePreference !== prevState.themePreference,
-      (state) => {
-        const effective = resolveEffectiveTheme(state.themePreference)
-        applyTheme(effective)
-        // Handle system listener
-        if (state.themePreference === "system") {
-          const cleanup = setupSystemThemeListener((t) => applyTheme(t))
-          setSystemListenerCleanup(() => cleanup)
-        } else {
-          systemListenerCleanup()
-          setSystemListenerCleanup(() => () => {})
+      (state, prevState) => {
+        if (state.themePreference !== prevState.themePreference) {
+          const effective = resolveEffectiveTheme(state.themePreference)
+          applyTheme(effective)
+          // Handle system listener
+          if (state.themePreference === "system") {
+            const cleanup = setupSystemThemeListener((t) => applyTheme(t))
+            setSystemListenerCleanup(() => cleanup)
+          } else {
+            systemListenerCleanup()
+            setSystemListenerCleanup(() => () => {})
+          }
         }
       }
     )
